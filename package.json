@@ -1,0 +1,16 @@
+{
+  "name": "passport-rdio",
+  "version": "0.1.0",
+  "description": "Rdio authentication strategy for Passport.",
+  "author": "Jared Hanson <jaredhanson@gmail.com> (http://www.jaredhanson.net/)",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jaredhanson/passport-rdio.git"
+  },
+  "main": "./lib/passport-rdio",
+  "dependencies": {
+    "passport-oauth": ">= 0.1.0"
+  },
+  "engines": { "node": ">= 0.4.0" },
+  "keywords": ["passport", "rdio", "auth", "authn", "authentication", "identity"]
+}
