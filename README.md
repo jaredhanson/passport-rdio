@@ -1,7 +1,7 @@
 # Passport-Rdio
 
 [Passport](https://github.com/jaredhanson/passport) strategy for authenticating
-with [Rdio](http://www.rdio.com/) using the OAuth 1.0a API.
+with [Rdio](http://www.rdio.com/) using the OAuth 2.0 API.
 
 This module lets you authenticate using Rdio in your Node.js applications.
 By plugging into Passport, Rdio authentication can be easily and
@@ -20,14 +20,14 @@ unobtrusively integrated into any application or framework that supports
 The Rdio authentication strategy authenticates users using a Rdio account and
 OAuth tokens.  The strategy requires a `verify` callback, which accepts these
 credentials and calls `done` providing a user, as well as `options` specifying a
-consumer key, consumer secret, and callback URL.
+client ID, client secret, and callback URL.
 
     passport.use(new RdioStrategy({
-        consumerKey: RDIO_API_KEY,
-        consumerSecret: RDIO_SHARED_SECRET,
+        clientID: RDIO_CLIENT_ID,
+        clientSecret: RDIO_CLIENT_SECRET,
         callbackURL: "http://127.0.0.1:3000/auth/rdio/callback"
       },
-      function(token, tokenSecret, profile, done) {
+      function(accessToken, refreshToken, profile, done) {
         User.findOrCreate({ rdioId: profile.id }, function (err, user) {
           return done(err, user);
         });
@@ -44,7 +44,7 @@ application:
 
     app.get('/auth/rdio',
       passport.authenticate('rdio'));
-    
+
     app.get('/auth/rdio/callback', 
       passport.authenticate('rdio', { failureRedirect: '/login' }),
       function(req, res) {

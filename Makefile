@@ -8,7 +8,7 @@ VOWS = ./node_modules/.bin/vows
 TESTS ?= test/*-test.js
 
 test:
-	@NODE_ENV=test NODE_PATH=lib $(VOWS) $(TESTS)
+	@NODE_ENV=test NODE_PATH=lib $(VOWS) $(TESTS) -v
 
 # ==============================================================================
 # Static Analysis
