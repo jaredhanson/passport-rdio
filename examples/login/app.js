@@ -4,8 +4,8 @@ var express = require('express')
   , logger = require('logger')
   , RdioStrategy = require('passport-rdio').Strategy;
 
-var RDIO_CLIENT_ID = "w7w2hy18f8wyxGmxKUPuvg";
-var RDIO_CLIENT_SECRET = "y5EJePM8T3TFZZN6q4RGRg";
+var RDIO_CLIENT_ID = "-- your client id --";
+var RDIO_CLIENT_SECRET = "-- your client secret --";
 
 
 // Passport session setup.
