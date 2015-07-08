@@ -32,7 +32,7 @@ vows.describe('RdioStrategy').addBatch({
       // mock
 
       strategy._oauth2._request = function(method, url, headers, post_data, accessToken, callback) {
-        var body = '{"status": "ok", "result": {"firstName": "Jared", "baseIcon": "user/no-user-image-square.jpg", "gender": "m", "url": "/people/jaredhanson/", "key": "x1111", "lastName": "Hanson", "libraryVersion": 2, "type": "s", "icon": "http://media.rd.io/user/no-user-image-square.jpg"}}';
+        var body = '{"status": "ok", "result": {"firstName": "Jared", "baseIcon": "user/no-user-image-square.jpg", "gender": "m", "url": "/people/jaredhanson/", "key": "x1111", "lastName": "Hanson", "libraryVersion": 2, "type": "s", "icon": "http://media.rd.io/user/no-user-image-square.jpg", "email": "test@test.com", "username": "jaredhanson"}}';
         callback(null, body, undefined);
       }
       
@@ -60,6 +60,9 @@ vows.describe('RdioStrategy').addBatch({
         assert.equal(profile.displayName, 'Jared Hanson');
         assert.equal(profile.name.familyName, 'Hanson');
         assert.equal(profile.name.givenName, 'Jared');
+        assert.equal(profile.username, 'jaredhanson');
+        assert.equal(profile.emails.length, 1);
+        assert.equal(profile.emails[0], 'test@test.com');
       },
       'should set raw property' : function(err, profile) {
         assert.isString(profile._raw);
