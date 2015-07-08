@@ -1,10 +1,11 @@
 var express = require('express')
   , passport = require('passport')
   , util = require('util')
+  , logger = require('logger')
   , RdioStrategy = require('passport-rdio').Strategy;
 
-var RDIO_API_KEY = "--insert-rdio-api-key-here--"
-var RDIO_SHARED_SECRET = "--insert-rdio-shared-secret-here--";
+var RDIO_CLIENT_ID = "-- your client id --";
+var RDIO_CLIENT_SECRET = "-- your client secret --";
 
 
 // Passport session setup.
@@ -25,17 +26,18 @@ passport.deserializeUser(function(obj, done) {
 
 // Use the RdioStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
-//   credentials (in this case, a token, tokenSecret, and Rdio profile), and
+//   credentials (in this case, an access token, a refresh token, and an Rdio profile), and
 //   invoke a callback with a user object.
 passport.use(new RdioStrategy({
-    consumerKey: RDIO_API_KEY,
-    consumerSecret: RDIO_SHARED_SECRET,
+    clientID: RDIO_CLIENT_ID,
+    clientSecret: RDIO_CLIENT_SECRET,
     callbackURL: "http://127.0.0.1:3000/auth/rdio/callback"
   },
-  function(token, tokenSecret, profile, done) {
+  function(accessToken, refreshToken, profile, done) {
+
     // asynchronous verification, for effect...
     process.nextTick(function () {
-      
+
       // To keep the example simple, the user's Rdio profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Rdio account with a user record in your database,
@@ -48,24 +50,22 @@ passport.use(new RdioStrategy({
 
 
 
-var app = express.createServer();
+var app = express();
 
 // configure Express
-app.configure(function() {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.logger());
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.session({ secret: 'keyboard cat' }));
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(express.logger());
+app.use(express.cookieParser());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.session({ secret: 'keyboard cat' }));
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(app.router);
+app.use(express.static(__dirname + '/public'));
 
 
 app.get('/', function(req, res){

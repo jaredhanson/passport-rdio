@@ -9,8 +9,8 @@ vows.describe('RdioStrategy').addBatch({
   'strategy': {
     topic: function() {
       return new RdioStrategy({
-        consumerKey: 'ABC123',
-        consumerSecret: 'secret'
+        clientID: 'ABC123',
+        clientSecret: 'secret'
       },
       function() {});
     },
@@ -23,14 +23,16 @@ vows.describe('RdioStrategy').addBatch({
   'strategy when loading user profile': {
     topic: function() {
       var strategy = new RdioStrategy({
-        consumerKey: 'ABC123',
-        consumerSecret: 'secret'
+        clientID: 'ABC123',
+        clientSecret: 'secret',
+        callbackURL: "http://127.0.0.1:3000/auth/rdio/callback"
       },
       function() {});
       
       // mock
-      strategy._oauth.post = function(url, token, tokenSecret, params, callback) {
-        var body = '{"status": "ok", "result": {"firstName": "Jared", "baseIcon": "user/no-user-image-square.jpg", "gender": "m", "url": "/people/jaredhanson/", "key": "x1111", "lastName": "Hanson", "libraryVersion": 2, "type": "s", "icon": "http://media.rd.io/user/no-user-image-square.jpg"}}';
+
+      strategy._oauth2._request = function(method, url, headers, post_data, accessToken, callback) {
+        var body = '{"status": "ok", "result": {"firstName": "Jared", "baseIcon": "user/no-user-image-square.jpg", "gender": "m", "url": "/people/jaredhanson/", "key": "x1111", "lastName": "Hanson", "libraryVersion": 2, "type": "s", "icon": "http://media.rd.io/user/no-user-image-square.jpg", "email": "test@test.com", "username": "jaredhanson"}}';
         callback(null, body, undefined);
       }
       
@@ -45,7 +47,7 @@ vows.describe('RdioStrategy').addBatch({
         }
         
         process.nextTick(function () {
-          strategy.userProfile('token', 'token-secret', {}, done);
+          strategy.userProfile('access-token', done);
         });
       },
       
@@ -58,6 +60,9 @@ vows.describe('RdioStrategy').addBatch({
         assert.equal(profile.displayName, 'Jared Hanson');
         assert.equal(profile.name.familyName, 'Hanson');
         assert.equal(profile.name.givenName, 'Jared');
+        assert.equal(profile.username, 'jaredhanson');
+        assert.equal(profile.emails.length, 1);
+        assert.equal(profile.emails[0], 'test@test.com');
       },
       'should set raw property' : function(err, profile) {
         assert.isString(profile._raw);
@@ -71,13 +76,14 @@ vows.describe('RdioStrategy').addBatch({
   'strategy when loading user profile and encountering an error': {
     topic: function() {
       var strategy = new RdioStrategy({
-        consumerKey: 'ABC123',
-        consumerSecret: 'secret'
+        clientID: 'ABC123',
+        clientSecret: 'secret',
+        callbackURL: "http://127.0.0.1:3000/auth/rdio/callback"
       },
       function() {});
       
       // mock
-      strategy._oauth.get = function(url, token, tokenSecret, callback) {
+      strategy._oauth2._request = function(method, url, headers, post_data, accessToken, callback) {
         callback(new Error('something went wrong'));
       }
       
@@ -92,7 +98,7 @@ vows.describe('RdioStrategy').addBatch({
         }
         
         process.nextTick(function () {
-          strategy.userProfile('token', 'token-secret', {}, done);
+          strategy.userProfile('access-token', done);
         });
       },
       
